@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Hamburguesa con Submenús</title>
+    <style>
+        /* Reset básico para eliminar margen, padding y ajustar box-sizing */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Estilo general del cuerpo */
+        body {
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Header fijo con sombra */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Overlay para oscurecer fondo cuando el menú está abierto */
+        .overlay {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 60px);
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 900;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+
+        /* Botón de hamburguesa para abrir/cerrar menú */
+        .hamburger-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            margin-right: 20px;
+        }
+
+        /* Estilos para cada línea dentro del botón hamburguesa */
+        .hamburger-btn span {
+            display: block;
+            width: 30px;
+            height: 3px;
+            background-color: #333;
+            margin: 5px 0;
+            transition: 0.4s;
+        }
+
+        /* Imagen de encabezado */
+        .header-image {
+            height: 40px;
+            width: 1000px;
+            object-fit: cover;
+        }
+
+        /* Contenedor del menú lateral */
+        .nav-menu {
+            position: fixed;
+            top: 60px;
+            left: -300px;
+            width: 300px;
+            height: calc(100vh - 60px);
+            background-color: #f8f9fa;
+            padding: 20px 0;
+            transition: 0.4s;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .nav-menu.active {
+            left: 0;
+        }
+
+        .menu-item {
+            position: relative;
+        }
+
+        /* Estilos para los elementos principales del menú */
+        .menu-item > a {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            color: #333;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .menu-item > a:hover {
+            background-color: #e9ecef;
+        }
+
+        .menu-text {
+            pointer-events: none;
+        }
+
+        .arrow-container {
+            padding: 10px;
+            margin: -10px;
+            cursor: pointer;
+        }
+
+        .arrow {
+            border: solid #333;
+            border-width: 0 2px 2px 0;
+            display: inline-block;
+            padding: 3px;
+            transform: rotate(45deg);
+            transition: 0.3s;
+            margin-bottom: 3px;
+            pointer-events: none;
+        }
+
+        .arrow.active {
+            transform: rotate(-135deg);
+            margin-bottom: 0;
+            margin-top: 3px;
+        }
+
+        .submenu {
+            display: none;
+            background-color: #e9ecef;
+        }
+
+        .submenu.active {
+            display: block;
+        }
+
+        .submenu a {
+            display: block;
+            padding: 12px 30px;
+            color: #333;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .submenu a:hover {
+            background-color: #dee2e6;
+        }
+
+        .hamburger-btn.active span:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .hamburger-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-btn.active span:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        .content-section {
+            padding: 80px 20px 20px;
+            margin: 0 auto;
+            max-width: 1200px;
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .content-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .content-section p {
+            line-height: 1.6;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+<!--******************************************************************
+	***			HEADER: Contiene el botón hamburguesa y la imagen del encabezado
+    ****************************************************************** -->  
+    <header class="header">
+        <button class="hamburger-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <img src="/api/placeholder/1000/40" alt="Header Image" class="header-image">
+    </header>
+
+    <!-- Overlay de fondo para el menú móvil -->
+    <div class="overlay"></div>
+
+<!--******************************************************************
+	***			MENÚ DE NAVEGACIÓN con submenús desplegables
+    ****************************************************************** -->  
+    <nav class="nav-menu">
+		<!-- MENU HOME -->
+        <div class="menu-item">
+            <a href="#Id_1_HOME" class="menu-link">
+                <span class="menu-text">HOME</span>
+            </a>
+        </div>
+        <!-- MENU LIGURIA -->
+        <div class="menu-item">
+            <a href="#Id_2_LIGURIA" class="menu-link">
+                <span class="menu-text">LIGURIA</span>
+                <span class="arrow-container"> <i class="arrow"></i></span>
+            </a>
+            <div class="submenu">
+                <a href="#ID_2_1_CinqueTerre">Cinque Terre</a>
+                <a href="#ID_2_2_SestriLevanto">Sestri Levanto</a>
+                <a href="#ID_2_3_Camogli">Camogli</a>
+                <a href="#ID_2_4_Portofino">Portofino</a>
+            </div>
+        </div>
+        <!-- MENU DOLOMITAS -->
+		<!--
+        <div class="menu-item">
+            <a href="#Id_3_Dolomitas" class="menu-link">
+                <span class="menu-text">DOLOMITAS</span>
+                <span class="arrow-container"> <i class="arrow"></i></span>
+            </a>
+            <div class="submenu">
+                <a href="#ID_3_1_Dolomitas">3_1_Dolomitas</a>
+                <a href="#ID_3_2_Dolomitas">3_2_Dolomitas</a>
+            </div>
+        </div>
+		-->
+        <!-- MENU CONTACT -->
+        <div class="menu-item">
+            <a href="#Id_4_Contact" class="menu-link">
+                <span class="menu-text">Contact</span>
+            </a>
+        </div>
+        <!-- MENU SUN DIRECTION -->
+        <div class="menu-item">
+            <a href="#Id_5_SunDirection" class="menu-link">
+                <span class="menu-text">SUN DIRECTION</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- ******************************************************************
+	***			SECCIONES DE CONTENIDO
+    ******************************************************************* -->  
+    <!-- ------------------------------------------------------------------
+	---			HOME (Seccion de nivel 1)
+    ------------------------------------------------------------------ -->  
+    <!-- Secciones de nivel 1 -->
+    <section id="Id_1_HOME" class="content-section">
+        <h2>TITULO HOME</h2>
+        <p>Ofrecemos una amplia gama de servicios profesionales para satisfacer todas tus necesidades empresariales. Nuestro equipo de expertos está preparado para ayudarte a alcanzar tus objetivos.</p>
+        <ul>
+            <li>Servicios de consultoría estratégica</li>
+            <li>Desarrollo de soluciones personalizadas</li>
+            <li>Soporte técnico especializado</li>
+            <li>Formación y capacitación</li>
+        </ul>
+    </section>
+
+
+    <!-- ------------------------------------------------------------------
+	---			LIGURIA (Seccion de nivel 1)
+    ------------------------------------------------------------------ -->  
+    <section id="Id_2_LIGURIA" class="content-section">
+        <h2>LIGURIA</h2>
+        <p>Descubre nuestra completa línea de productos innovadores diseñados para optimizar tu negocio. Soluciones de última generación que marcan la diferencia.</p>
+        <ul>
+            <li>Software empresarial</li>
+            <li>Soluciones cloud</li>
+            <li>Equipamiento profesional</li>
+            <li>Sistemas integrados</li>
+        </ul>
+    </section>
+
+    <section id="ID_2_1_CinqueTerre" class="content-section">
+        <h2>Cinque Terre</h2>
+        <p>Soluciones de software para empresas y particulares.</p>
+    </section>
+
+    <section id="ID_2_2_SestriLevanto" class="content-section">
+        <h2>Sestri Levanto</h2>
+        <p>Equipamiento y dispositivos de última generación.</p>
+    </section>
+	
+    <section id="ID_2_3_Camogli" class="content-section">
+        <h2>Camogli</h2>
+        <p>Equipamiento y dispositivos de última generación.</p>
+    </section>
+	
+    <section id="ID_2_4_Portofino" class="content-section">
+        <h2>Portofino</h2>
+        <p>Equipamiento y dispositivos de última generación.</p>
+    </section>
+	
+ 
+   <!-- ------------------------------------------------------------------
+	---			DOLOMITAS (Seccion de nivel 1)
+    ------------------------------------------------------------------ -->  
+	<!--
+    <section id="Id_3_Dolomitas" class="content-section">
+        <h2>DOLOMITAS</h2>
+        <p>Accede a nuestra biblioteca completa de recursos y herramientas. Material diseñado para ayudarte a sacar el máximo provecho de nuestros productos y servicios.</p>
+        <ul>
+            <li>Guías de usuario</li>
+            <li>Documentación técnica</li>
+            <li>Vídeos formativos</li>
+            <li>Base de conocimientos</li>
+        </ul>
+    </section>
+
+   <section id="ID_3_1_Dolomitas" class="content-section">
+        <h2>3_1_Dolomitas</h2>
+        <p>Documentación técnica detallada de nuestros productos.</p>
+    </section>
+
+    <section id="ID_3_2_Dolomitas" class="content-section">
+        <h2>3_2_Dolomitas</h2>
+        <p>Guías paso a paso para aprender a usar nuestros productos.</p>
+    </section>
+	--> 
+	
+    <!-- ------------------------------------------------------------------
+	---			CONTACT (Seccion de nivel 1)
+    ------------------------------------------------------------------ -->  
+    <section id="Id_4_Contact" class="content-section">
+        <h2>Contacto</h2>
+        <p>Estamos aquí para ayudarte. Encuentra la mejor manera de contactar con nuestro equipo y obtener el soporte que necesitas.</p>
+        <ul>
+            <li>Atención al cliente 24/7</li>
+            <li>Soporte técnico especializado</li>
+            <li>Consultas comerciales</li>
+            <li>Oficinas regionales</li>
+        </ul>
+    </section>
+
+
+    <!-- ------------------------------------------------------------------
+	---			SUN DIRECTION (Seccion de nivel 1)
+    ------------------------------------------------------------------ -->  
+    <section id="Id_5_SunDirection" class="content-section">
+        <h2>SUN DIRECTION</h2>
+        <p>Estamos aquí para ayudarte. Encuentra la mejor manera de contactar con nuestro equipo y obtener el soporte que necesitas.</p>
+        <ul>
+            <li>Atención al cliente 24/7</li>
+            <li>Soporte técnico especializado</li>
+            <li>Consultas comerciales</li>
+            <li>Oficinas regionales</li>
+        </ul>
+    </section>
+
+
+    <!-- ******************************************************************
+	***			JAVASCRIPT
+    ******************************************************************* -->  
+    <script>
+        const hamburgerBtn = document.querySelector('.hamburger-btn');
+        const navMenu = document.querySelector('.nav-menu');
+        const menuLinks = document.querySelectorAll('.menu-link');
+        const submenuLinks = document.querySelectorAll('.submenu a');
+        const overlay = document.querySelector('.overlay');
+        const contentSections = document.querySelectorAll('.content-section');
+        const arrowContainers = document.querySelectorAll('.arrow-container');
+
+        // Toggle menú hamburguesa
+        hamburgerBtn.addEventListener('click', () => {
+            hamburgerBtn.classList.toggle('active');
+            navMenu.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+
+        // Ocultar todas las secciones excepto la activa
+        function showSection(sectionId) {
+            contentSections.forEach(section => {
+                section.classList.remove('active');
+            });
+            const targetSection = document.querySelector(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+        }
+
+        // Manejo de los clicks en las opciones del menú principal
+        menuLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                // Si se hace clic en el área del texto (no en la flecha)
+                if (!e.target.closest('.arrow-container')) {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href');
+                    showSection(targetId);
+                    closeMenu();
+                }
+            });
+        });
+
+        // Manejo de los clicks en las flechas
+        arrowContainers.forEach(container => {
+            container.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const menuItem = container.closest('.menu-item');
+                const submenu = menuItem.querySelector('.submenu');
+                const arrow = container.querySelector('.arrow');
+                const menuLink = menuItem.querySelector('.menu-link');
+                const targetId = menuLink.getAttribute('href');
+                
+                // Mostrar el contenido de la sección principal
+                showSection(targetId);
+                
+                // Toggle del submenu
+                submenu.classList.toggle('active');
+                arrow.classList.toggle('active');
+            });
+        });
+
+        // Cerrar menú al hacer clic en enlaces de submenú
+        submenuLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href');
+                showSection(targetId);
+                closeMenu();
+            });
+        });
+
+        // Función para cerrar el menú
+        function closeMenu() {
+            hamburgerBtn.classList.remove('active');
+            navMenu.classList.remove('active');
+            overlay.classList.remove('active');
+            document.querySelectorAll('.submenu.active').forEach(submenu => {
+                submenu.classList.remove('active');
+            });
+            document.querySelectorAll('.arrow.active').forEach(arrow => {
+                arrow.classList.remove('active');
+            });
+        }
+
+        // Cerrar menú al hacer clic en overlay
+        overlay.addEventListener('click', closeMenu);
+
+        // Mostrar la primera sección por defecto
+        showSection('#Id_1_HOME');
+    </script>
+</body>
+</html>
